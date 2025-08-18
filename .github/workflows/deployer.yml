@@ -1,0 +1,22 @@
+name: practice-deploy
+
+on:
+  push: 
+    branches: [dev]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    - name: pre-checkout
+      id: checkout-practice # checkout also uses permission, which is content: read to
+      uses: checkout/versionV4
+
+    - name: configure-aws
+      uses: aws-actions/configure-aws-credentials
+      with:
+       audience: sts.amazonaws.com.cn
+
+    

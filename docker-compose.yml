@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  batalion:
+    build: .
+    container_name: gilded-soldier
+    ports:
+      - 9000:9000
+    restart: always
+

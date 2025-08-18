@@ -3,8 +3,10 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from random import choice
 from time import time
+from serviceDemo.demo import microServiceDemo
 
 app = FastAPI(version="0.0.0.1", description="this is just a sample app i am testing")
+app.include_router(microServiceDemo)
 
 @app.middleware("http")
 async def userAgent(req: Request, call_next):
@@ -20,9 +22,10 @@ async def userAgent(req: Request, call_next):
 @app.middleware("http")
 async def timeCalculator(req: Request, call_next):
     startTime = time()
-    response: Response = call_next(req)
+    response: Response = await call_next(req)
     endTime = time()
-    response["timeTaken"] = endTime - startTime
+    process_time = endTime - startTime
+    response.headers["X-Process-Time"] = str(process_time)  # Add custom header
     return response
 
 class responseModel(BaseModel):

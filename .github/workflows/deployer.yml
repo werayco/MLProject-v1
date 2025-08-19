@@ -27,10 +27,10 @@ jobs:
       - name: Test AWS Credential
         run: aws sts get-caller-identity
 
-      - name: Package and push helm chart to Amazon ECR
+      - name: Build and push Docker image to ECR
         run: |
-          docker build -t werayco:${{ github.sha }} .
-          docker push ${{ secrets.AWS_ECR_URI }}/werayco:${{ github.sha }}
+          docker build -t ${{ secrets.AWS_ECR_URI }}/oidcpractice:${{ github.sha }} .
+          docker push ${{ secrets.AWS_ECR_URI }}/oidcpractice:${{ github.sha }}
 
       # - name: Copy files to EC2
       #   uses: appleboy/scp-action@v0.1.7

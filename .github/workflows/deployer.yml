@@ -22,5 +22,6 @@ jobs:
         with:
           role-to-assume: ${{secrets.AWS_ARN_ROLE}}
           aws-region: us-east-1
+          audience: sts.amazonaws.com
       - name: Test AWS Credential
         run: aws sts get-caller-identity

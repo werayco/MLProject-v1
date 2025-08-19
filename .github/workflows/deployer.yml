@@ -1,8 +1,8 @@
 name: practice-deploy
 
 on:
-  push: 
-    branches: [dev]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -10,13 +10,18 @@ permissions:
 
 jobs:
   deploy:
-    - name: pre-checkout
-      id: checkout-practice # checkout also uses permission, which is content: read to
-      uses: checkout/versionV4
+    runs-on: ubuntu-latest
 
-    - name: configure-aws
-      uses: aws-actions/configure-aws-credentials
-      with:
-       audience: sts.amazonaws.com.cn
+    steps:
+      - name: Pre-checkout
+        id: checkout-practice
+        uses: actions/checkout@v4
 
-    
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{secrets.AWS_ARN_ROLE}}
+          aws-region: us-east-1
+          audience: sts.amazonaws.com
+      - name: Test AWS Credential
+        run: aws sts get-caller-identity

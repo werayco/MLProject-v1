@@ -1,6 +1,6 @@
 services:
   gildedsoldier:
-    build: .
+    image: 518033441890.dkr.ecr.us-east-1.amazonaws.com/oidcpractice:latest
     container_name: gilded-soldier
     ports:
       - 7890:7890

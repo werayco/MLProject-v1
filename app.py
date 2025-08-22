@@ -11,7 +11,7 @@ import os
 
 bucket_name = "bucket-practice-rayco"
 s3_folder = "ml_models"
-local_download = "."
+local_download = "/app/models/"  # CHANGE THIS LINE
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

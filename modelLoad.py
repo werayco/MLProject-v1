@@ -14,10 +14,9 @@ def pickle_loader(path_of_pickle_file: str):
         output = pkl.load(model_obj)
     return output
 
-vectorizer = pickle_loader("vectorizer.pkl")
-model = pickle_loader("multinomial_naive_bayess.pkl")
-encoder = pickle_loader("encoder.pkl")
-
+vectorizer = pickle_loader("/app/models/vectorizer.pkl")
+model = pickle_loader("/app/models/multinomial_naive_bayess.pkl")
+encoder = pickle_loader("/app/models/encoder.pkl")
 def second_workflow(text):
     email_text = (
         text.lower().translate(str.maketrans("", "", string.punctuation)).split()

@@ -4,10 +4,40 @@ from pydantic import BaseModel
 from random import choice
 from time import time
 from serviceDemo.demo import microServiceDemo
+from contextlib import asynccontextmanager
+import pyfiglet
+import boto3
+import os
 
-app = FastAPI(version="0.0.0.1", description="this is just a sample app i am testing")
+bucket_name = "bucket-practice-rayco"
+s3_folder = "ml_models"
+local_download = "."
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    ascii_art = pyfiglet.figlet_format("WELCOME TO RAYCO'S CABAL")
+    print(ascii_art)
+
+    print("Starting app... downloading models from S3")
+    s3 = boto3.client("s3")
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=s3_folder)
+    for obj in objects.get("Contents", []):
+        s3_key = obj["Key"]
+        local_path = os.path.join(local_download, os.path.relpath(s3_key, s3_folder))
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        print(f"Downloading {s3_key} to {local_path}")
+        s3.download_file(bucket_name, s3_key, local_path)
+
+    yield
+
+    print("Shutting down app... cleanup here if needed")
+    ascii_art = pyfiglet.figlet_format("BYE, SEE YOU NEXT TIME!")
+    print(ascii_art)
+
+
+
+app = FastAPI(version="0.0.0.1", description="this is just a sample app i am testing", lifespan=lifespan)
 app.include_router(microServiceDemo)
-
 @app.middleware("http")
 async def userAgent(req: Request, call_next):
     if req.headers.get("jwt") == "1234":

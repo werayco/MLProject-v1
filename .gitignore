@@ -1,1 +1,4 @@
 .\traefik.yml
+.\encoder.pkl
+.\vectorizer.pkl
+.\multinomial_naive_bayess.pkl

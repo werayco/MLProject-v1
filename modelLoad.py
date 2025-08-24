@@ -1,23 +1,22 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import pickle as pkl
 from nltk.stem import PorterStemmer
-import os
 from nltk.corpus import stopwords
 import string
 
 stopwords_set = set(stopwords.words("english"))
-stemmer = PorterStemmer()  
+stemmer = PorterStemmer()
 
 def pickle_loader(path_of_pickle_file: str):
     with open(path_of_pickle_file, "rb") as model_obj:
-        output = pkl.load(model_obj)
-    return output
+        return pkl.load(model_obj)
 
-vectorizer = pickle_loader("/app/models/vectorizer.pkl")
-model = pickle_loader("/app/models/multinomial_naive_bayess.pkl")
-encoder = pickle_loader("/app/models/encoder.pkl")
-def second_workflow(text):
+def load_models():
+    vectorizer = pickle_loader("./vectorizer.pkl")
+    model = pickle_loader("./multinomial_naive_bayess.pkl")
+    encoder = pickle_loader("./encoder.pkl")
+    return vectorizer, model, encoder
+
+def second_workflow(text, vectorizer, model, encoder):
     email_text = (
         text.lower().translate(str.maketrans("", "", string.punctuation)).split()
     )
@@ -33,4 +32,3 @@ def second_workflow(text):
     confidence = predicted_probabilities[0][predicted_class[0]]
     actual_label = encoder.inverse_transform(predicted_class)
     return actual_label[0], confidence
-

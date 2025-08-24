@@ -3,4 +3,5 @@ uvicorn
 pyfiglet
 scikit-learn == 1.4.2
 nltk
+python-dotenv
 boto3

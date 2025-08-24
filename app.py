@@ -8,10 +8,14 @@ from contextlib import asynccontextmanager
 import pyfiglet
 import boto3
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 bucket_name = "bucket-practice-rayco"
 s3_folder = "ml_models"
-local_download = "/app/models/"  # CHANGE THIS LINE
+local_download = "." 
+from modelLoad import load_models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,7 +23,11 @@ async def lifespan(app: FastAPI):
     print(ascii_art)
 
     print("Starting app... downloading models from S3")
-    s3 = boto3.client("s3")
+    s3 = boto3.client(
+        "s3",
+        # aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        # aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
+    )
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=s3_folder)
     for obj in objects.get("Contents", []):
         s3_key = obj["Key"]
@@ -28,13 +36,13 @@ async def lifespan(app: FastAPI):
         print(f"Downloading {s3_key} to {local_path}")
         s3.download_file(bucket_name, s3_key, local_path)
 
+    app.state.vectorizer, app.state.model, app.state.encoder = load_models()
+
     yield
 
     print("Shutting down app... cleanup here if needed")
     ascii_art = pyfiglet.figlet_format("BYE, SEE YOU NEXT TIME!")
     print(ascii_art)
-
-
 
 app = FastAPI(version="0.0.0.1", description="this is just a sample app i am testing", lifespan=lifespan)
 app.include_router(microServiceDemo)

@@ -5,4 +5,7 @@ services:
     ports:
       - 7890:7890
     restart: always
+    env_file:
+      - "./.env"
 
+# aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 518033441890.dkr.ecr.us-east-1.amazonaws.com

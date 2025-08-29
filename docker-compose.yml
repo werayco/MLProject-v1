@@ -44,7 +44,7 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - flaskapp
+      - gildedsoldier
     labels:
       - traefik.enable=true
       - traefik.http.routers.classifier-http.entrypoints=web

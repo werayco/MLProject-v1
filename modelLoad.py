@@ -1,9 +1,9 @@
 import pickle as pkl
 from nltk.stem import PorterStemmer
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 import string
 
-stopwords_set = set(stopwords.words("english"))
+# stopwords_set = set(stopwords.words("english"))
 stemmer = PorterStemmer()
 
 def pickle_loader(path_of_pickle_file: str):
@@ -21,7 +21,7 @@ def second_workflow(text, vectorizer, model, encoder):
         text.lower().translate(str.maketrans("", "", string.punctuation)).split()
     )
     email_text = [
-        stemmer.stem(word) for word in email_text if word not in stopwords_set
+        stemmer.stem(word) for word in email_text
     ]
     email_text = " ".join(email_text)
     email_corpus = [email_text]

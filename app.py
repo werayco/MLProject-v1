@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from random import choice
+from celeryConfig import celset
 from time import time
 from serviceDemo.demo import microServiceDemo
 from contextlib import asynccontextmanager
@@ -9,8 +10,22 @@ import pyfiglet
 import boto3
 import os
 from dotenv import load_dotenv
-
+from celery.result import AsyncResult
+from prometheus_client import Counter
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+requestCounter = Counter("ReqCount", "Used to count requests")
 load_dotenv()
+
+class AddRequest(BaseModel):
+    x: int
+    y: int
+class responseModel(BaseModel):
+    status: str
+    response: str
+
+class requestModel(BaseModel):
+    query: str
+    
 
 bucket_name = "bucket-practice-rayco"
 s3_folder = "ml_models"
@@ -23,11 +38,7 @@ async def lifespan(app: FastAPI):
     print(ascii_art)
 
     print("Starting app... downloading models from S3")
-    s3 = boto3.client(
-        "s3",
-        # aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-        # aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
-    )
+    s3 = boto3.client("s3")
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=s3_folder)
     for obj in objects.get("Contents", []):
         s3_key = obj["Key"]
@@ -63,18 +74,30 @@ async def timeCalculator(req: Request, call_next):
     response: Response = await call_next(req)
     endTime = time()
     process_time = endTime - startTime
-    response.headers["X-Process-Time"] = str(process_time)  # Add custom header
+    response.headers["X-Process-Time"] = str(process_time)
     return response
 
-class responseModel(BaseModel):
-    status: str
-    response: str
 
-class requestModel(BaseModel):
-    query: str
+@app.route("/metrics")
+async def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
+@app.post("/add")
+async def add_task(payload: AddRequest):
+    task = celset.add.delay(payload.x, payload.y)
+    return {"task_id": task.id}
+
+@app.get("/result/{task_id}")
+async def get_result(task_id: str):
+    resultObject = AsyncResult(task_id, app=celset.celery_app) # the ready() method tells us if the result of the worker is ready or not (True/False), stay cheesed up :)
+    resultBool: bool = resultObject.ready()
+    if resultBool:
+        return {"task_id": task_id, "result": resultObject.get()}
+    return {"task_id": task_id, "result": "The result isn't ready yet, kindly come back later"}
 
 @app.post("/poster", response_model=responseModel, status_code=200)
-def posterHander(payLoad: requestModel):
+async def posterHander(payLoad: requestModel):
+    requestCounter.inc()
     greetings = [
         f"Hello, Mr {payLoad.query}. It's nice to meet you!",  
         f"Hi there, Mr {payLoad.query}! Great to meet you.",
@@ -90,6 +113,6 @@ def posterHander(payLoad: requestModel):
     greet = choice(greetings)
     return {"status": "success", "response": greet}
 
-@app.get("/{item}")
-def homeRoute(item: str):
-    return {"status": "this app is ready to go!", "number": item}
+@app.get("/")
+async def homeRoute():
+    return {"status": "this app is ready to go!", "number": 6}

@@ -4,3 +4,5 @@
 .\multinomial_naive_bayess.pkl
 .env
 \.env
+.\traefik_proxy\.env
+traefik_proxy/

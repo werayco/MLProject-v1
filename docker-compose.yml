@@ -47,11 +47,11 @@ services:
       - gildedsoldier
     labels:
       - traefik.enable=true
-      - traefik.http.routers.classifier-http.entrypoints=web
-      - traefik.http.routers.classifier-http.rule=Host(`prometheus.devrayco.name.ng`)
-      - traefik.http.routers.classifier-https.tls=true
-      - traefik.http.routers.classifier-https.tls.certresolver=thenonsensedev
-      - traefik.http.routers.classifier-http.entrypoints=websecure
+      - traefik.http.routers.prometheus-http.entrypoints=web
+      - traefik.http.routers.prometheus-http.rule=Host(`prometheus.devrayco.name.ng`)
+      - traefik.http.routers.prometheus-https.tls=true
+      - traefik.http.routers.prometheus-https.tls.certresolver=thenonsensedev
+      - traefik.http.routers.prometheus-http.entrypoints=websecure
 
   grafana:
     image: grafana/grafana:latest
@@ -66,11 +66,11 @@ services:
       - myApp
     labels:
       - traefik.enable=true
-      - traefik.http.routers.classifier-http.entrypoints=web
-      - traefik.http.routers.classifier-http.rule=Host(`grafana.devrayco.name.ng`)
-      - traefik.http.routers.classifier-https.tls=true
-      - traefik.http.routers.classifier-https.tls.certresolver=thenonsensedev
-      - traefik.http.routers.classifier-http.entrypoints=websecure
+      - traefik.http.routers.grafana-http.entrypoints=web
+      - traefik.http.routers.grafana-http.rule=Host(`grafana.devrayco.name.ng`)
+      - traefik.http.routers.grafana-https.tls=true
+      - traefik.http.routers.grafana-https.tls.certresolver=thenonsensedev
+      - traefik.http.routers.grafana-http.entrypoints=websecure
 
 networks:
   myApp:

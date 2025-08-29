@@ -1,6 +1,7 @@
+version: "3.9"
+
 services:
   gildedsoldier:
-    # build: .
     image: 518033441890.dkr.ecr.us-east-1.amazonaws.com/oidcpractice:latest
     container_name: gilded-soldier
     ports:
@@ -12,14 +13,13 @@ services:
       - myApp
     labels:
       - traefik.enable=true
-      - traefik.http.routers.classifier-http.entrypoints=web
-      - traefik.http.routers.classifier-http.rule=Host(`app.devrayco.name.ng`)
-      - traefik.http.routers.classifier-https.tls=true
-      - traefik.http.routers.classifier-https.tls.certresolver=thenonsensedev
-      - traefik.http.routers.classifier-http.entrypoints=websecure
+      - traefik.http.routers.gildedsoldier.rule=Host(`app.devrayco.name.ng`)
+      - traefik.http.routers.gildedsoldier.entrypoints=websecure
+      - traefik.http.routers.gildedsoldier.tls.certresolver=thenonsensedev
 
   redis:
     image: redis:7
+    container_name: redis
     ports:
       - "6379:6379"
     networks:
@@ -47,14 +47,13 @@ services:
       - gildedsoldier
     labels:
       - traefik.enable=true
-      - traefik.http.routers.prometheus-http.entrypoints=web
-      - traefik.http.routers.prometheus-http.rule=Host(`prometheus.devrayco.name.ng`)
-      - traefik.http.routers.prometheus-https.tls=true
-      - traefik.http.routers.prometheus-https.tls.certresolver=thenonsensedev
-      - traefik.http.routers.prometheus-http.entrypoints=websecure
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.devrayco.name.ng`)
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.routers.prometheus.tls.certresolver=thenonsensedev
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - "3000:3000"
     environment:
@@ -66,13 +65,10 @@ services:
       - myApp
     labels:
       - traefik.enable=true
-      - traefik.http.routers.grafana-http.entrypoints=web
-      - traefik.http.routers.grafana-http.rule=Host(`grafana.devrayco.name.ng`)
-      - traefik.http.routers.grafana-https.tls=true
-      - traefik.http.routers.grafana-https.tls.certresolver=thenonsensedev
-      - traefik.http.routers.grafana-http.entrypoints=websecure
+      - traefik.http.routers.grafana.rule=Host(`grafana.devrayco.name.ng`)
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls.certresolver=thenonsensedev
 
 networks:
   myApp:
     external: true
-# aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 518033441890.dkr.ecr.us-east-1.amazonaws.com

@@ -5,6 +5,8 @@ services:
     container_name: gilded-soldier
     ports:
       - 7890:7890
+    volumes:
+      - ~/.aws/credentials:/root/.aws/credentials
     restart: always
     networks:
       - myApp

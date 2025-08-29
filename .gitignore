@@ -6,3 +6,4 @@
 \.env
 .\traefik_proxy\.env
 traefik_proxy/
+./prometheus.yml

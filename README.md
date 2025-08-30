@@ -8,6 +8,8 @@
 - Amazon services like IAM, ECR, EC2, S3.
 - Prometheus and Grafana for observability and monitoring.
 - FastAPI for model serving.
+- Redis (Broker)
+- Celery (Task Queue Manager)
 
 
 **Clone this project**

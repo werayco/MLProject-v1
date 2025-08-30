@@ -14,6 +14,3 @@
 ```console
 git clone https://github.com/werayco/ml-project-v01.git
 ```
-
-**How to run the project
-Navigate to this directory

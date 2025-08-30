@@ -20,7 +20,7 @@ jobs:
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{secrets.AWS_ARN_ROLE}} # this one is 
+          role-to-assume: ${{secrets.AWS_ARN_ROLE}}
           aws-region: us-east-1
           audience: sts.amazonaws.com
 
@@ -59,9 +59,6 @@ jobs:
               docker compose down
 
               aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
-              docker compose up --pull always
+              docker compose up -d
+              echo "the services are being built!"
 
-      - name: Test AWS Credential--2
-        run: aws sts get-caller-identity
-
-             
